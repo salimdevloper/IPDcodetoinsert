@@ -159,6 +159,9 @@ if($result=$mysqli -> query($sql))
             if($mysqli->query($sql))
             {
                 echo"data inserted";
+                $sqlbed="INSERT INTO `tvd_bed_avialbel_chk`( `Ipdnumber`,`bed_no`, `department`, `status`) VALUES ('$newipdnumber','$bedno','$dept',1)";
+                    $res=$mysqli->query($sqlbed);
+                     
             }
             else{
                 echo"sorry not inserted";
