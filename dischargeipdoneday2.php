@@ -74,7 +74,7 @@ function randomdicharge($n)
       
       if($method)
       {
-        $sql="SELECT  `Ipdnumber`  FROM `ipdgenralinfoold` WHERE `pstatus2` = 'Admitted' AND `pdate2` = '$date2' LIMIT $n";
+        $sql="SELECT  `Ipdnumber`,admittedate2,admindate  FROM `ipdgenralinfoold` WHERE `pstatus2` = 'Admitted' AND `pdate2` = '$date2' LIMIT $n";
       }
       else{
         randomdicharge($n);
@@ -89,24 +89,28 @@ function randomdicharge($n)
             while($row=$result->fetch_array(MYSQLI_NUM))
             {
                 echo "come in while ".$row[0];
-                $sql="UPDATE `ipdgenralinfoold` SET `pstatus2`='discharge',`disdate`='$date',`disdate2`='$date2' WHERE `Ipdnumber`='$row[0]'";
-                if($result2=$mysqli->query($sql))
-                {
-                        echo "update in ipd";
-                }
-                else{
-                    echo"<h1>wrong</h1>";
-                }
-                
-                $sql="update tvd_bed_avialbel_chk set status='0' where Ipdnumber='$row[0]'";
-                if($res=$mysqli->query($sql))
-                {
-                    echo "update in table bed";
-                }
-                else{
-                    echo"wrong in table bed";
-                }
-    
+
+               
+
+                                        $sql="UPDATE `ipdgenralinfoold` SET `pstatus2`='discharge',`disdate`='$date',`disdate2`='$date2' WHERE `Ipdnumber`='$row[0]' and pdate='$date'";
+                                        if($result2=$mysqli->query($sql))
+                                        {
+                                                echo "update in ipd";
+                                        }
+                                        else{
+                                            echo"<h1>wrong</h1>";
+                                        }
+                                        
+                                        $sql="update tvd_bed_avialbel_chk set status='0' where Ipdnumber='$row[0]'";
+                                        if($res=$mysqli->query($sql))
+                                        {
+                                            echo "update in table bed";
+                                        }
+                                        else{
+                                            echo"wrong in table bed";
+                                        }
+                                        
+                   
             }
         }
         else{
@@ -129,14 +133,7 @@ function randomdicharge($n)
     else{
    echo"connection established";
       $res=discharge($n,1);
-        $res=discharge($n,0);
-
-
-
-
-    
-    
- 
+        $res=discharge($n,0); 
  
   }
 

@@ -235,8 +235,146 @@ else{
 
 
 
-if(isset($_POST['btnsubmit']))
+
+function checkday($admited,$current)
 {
+   
+   
+   
+    $date11=date_create($admited);
+    $date22=date_create($current);
+    $diff=date_diff($date11,$date22);
+    echo " ".$current;
+    echo " ".$admited;
+    $di=$diff->format("%R%a days");
+    echo $di;
+    echo "come".$current." oklk".$admited;
+   
+    return $di;
+}
+function randomdicharge($n)
+{   global $mysqli,$date2,$date1,$status;
+    
+
+    $sql="select Ipdnumber,admittedate2,admindate from ipdgenralinfoold where `pstatus2` = 'Admitted' AND `pdate` = '$date2' order by rand()";
+    echo $date1."random chane".$date2;
+ 
+    $result=$mysqli->query($sql);
+    
+    while(($row=$result->fetch_Array(MYSQLI_NUM)) && $n>=1)
+    {    
+        echo $row[1]."dateee";
+        
+        $diff=checkday($row[1],$date2);
+    
+       
+                if($diff>=6)
+                    {    echo "<script>sequance dicharge<script>";
+                        $sql="UPDATE `ipdgenralinfoold` SET `pstatus2`='discharge',`disdate`='$date2',`disdate2`='$date1' WHERE `Ipdnumber`='$row[0]' and pdate='$date2'";
+                        if($result2=$mysqli->query($sql))
+                        {
+                                echo "update in ipd";
+                                echo "<script>sequance dicharge no<script>";
+                        }
+                        else{
+                            echo"<h1>wrong</h1>";
+                        }
+                        
+                        $sql="update tvd_bed_avialbel_chk set status='0' where Ipdnumber='$row[0]'";
+                        if($res=$mysqli->query($sql))
+                        {
+                            echo "update in table bed";
+                        }
+                        else{
+                            echo"wrong in table bed";
+                        }
+                        $n-=1;
+                    }
+            
+        
+        }         
+   
+}
+
+
+
+
+
+function discharge($n,$method)
+    { 
+        
+        global $date1,$date2,$mysqli,$status;
+        echo $date2."second ".$date1;
+        //$sql="select Ipdnumber from ipdgenralinfoold where pdate='".$date."' and status2='Admitted' top 5 ";
+      
+      
+      if($method)
+      {
+        $sql="SELECT  `Ipdnumber`,`admittedate2`,`admindate`  FROM `ipdgenralinfoold` WHERE `pstatus2` = 'Admitted' and `pdate`='$date2'   LIMIT $n";
+      }
+      else{
+        randomdicharge($n);
+        return 0;
+      }
+     
+       
+       
+                    if($result=$mysqli->query($sql))
+                    {
+                                        echo "<script>sequance dicharge<script>";
+                                        while($row=$result->fetch_array(MYSQLI_NUM))
+                                        {   
+
+                                            $diff=checkday($row[1],$date2);
+    
+       
+                                            if($diff>=6)
+                                                { 
+                                            
+                                            
+                                                            echo "come in while ".$row[0];
+                                                            $sql="UPDATE `ipdgenralinfoold` SET `pstatus2`='discharge',`disdate`='$date2',`disdate2`='$date1' WHERE `Ipdnumber`='$row[0]' and `pdate`='$date2' ";
+                                                            if($result2=$mysqli->query($sql))
+                                                            {
+                                                                    echo "update in ipd";
+                                                            }
+                                                            else{
+                                                                echo"<h1>wrong</h1>";
+                                                            }
+                                                            
+                                                            $sql="update tvd_bed_avialbel_chk set status='0' where Ipdnumber='$row[0]'";
+                                                            if($res=$mysqli->query($sql))
+                                                            {
+                                                                echo "update in table bed";
+                                                            }
+                                                            else{
+                                                                echo"wrong in table bed";
+                                                            }
+                                                 }
+                                        }
+                    }
+                    else{
+                        echo "not going";
+                    }
+        return 0;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     $date1=$_POST['odate'];
     $date2=$_POST['oodate'];
     $kachi=$_POST['kaychikista'];
@@ -247,6 +385,21 @@ if(isset($_POST['btnsubmit']))
     $panchkarma=$_POST['panchakarma'];
     $casulity=$_POST['casulity'];
     $Swasthvritta=$_POST['Swasthvritta'];
+    $status="discharge";
+    $discharge=$_POST['discharge'];
+
+
+
+
+
+
+
+
+
+
+if(isset($_POST['btnsubmit']))
+{
+    
     echo $date1."  ".$date2."  ".$kachi."  ".$kumar."  ".$shayl." ".$shaykyan." ".$sri." ".$panchkarma;
 
 
@@ -296,15 +449,103 @@ if(isset($_POST['btnsubmit']))
         insert($kumar,$date1,$date2,"Word No.6","Kaumarbharitya");
     }
   
+
+    $res=discharge($discharge,0);
+    echo "<h1>call 2322funtion</h1>";
+    $res=discharge($discharge,1);
+
+
+    $oodate=$date2;
+    $odate=$date1;
+    $ipdnumber10=0;
+    $ipdnumber11=0;
+    $mysqli= new mysqli("localhost","root","","medicalcollege");
+    $sql="SELECT `Srno`
+    FROM `ipdgenralinfoold`
+    WHERE `pdate` = '$oodate'";
+    $result=$mysqli->query($sql);
+     
+        $row=$result->fetch_row();
+        $ipdnumber11=$row[0];
+        echo "sr no".$ipdnumber11;
+    while($row=$result->fetch_row())
+    {
+        $ipdnumber10=$row[0];
+    }
+    echo "sr no".$ipdnumber10;
     
-   
-   
-
-
-
-
-
-
+    
+    
+      
+    
+    
+    
+    
+        //echo ".";
+        $date = strtotime("+1 day", strtotime($oodate));
+    $oodate=date('Y-m-d',$date);
+    $date = strtotime("+1 day", strtotime($odate));
+    $odate=date('Y-m-d',$date);
+        $datecon=new DateTime($oodate);
+        //$update=date_format($datecon,'d-m-Y');
+         $oodate=date_format($datecon,'j-n-Y');
+        
+        //echo "$oodate";
+        //echo $odate;
+        
+    
+    
+        $sql="select *From ipdgenralinfoold where srno between '".$ipdnumber11 ."' and '".$ipdnumber10 ."' and pstatus2='Admitted'";
+        //$sql="SELECT * FROM `ipdgenralinfoold` where `Srno` between $ipdnumber11 and  $ipdnumber10 and pstatus2 ='Admitted' ";
+    
+    //$sql="select *From ipdgenralinfoold";
+            //echo $sql;
+            $res=$mysqli->query($sql);
+            
+    
+           
+        
+    
+        
+            while( $row=$res->fetch_assoc())
+            {
+        
+               
+          $A= $row['Opdnumber']; 
+          $B= $row['Ipdnumber']; 
+          $C= $row['pname']; 
+          $D= $row['padd']; 
+          $E= $row['pdept']; 
+          $F= $row['pipddept']; 
+          $G= $row['pdoct']; 
+          $H= $row['page']; 
+          $I= $row['psex']; 
+          $J= $row['pword']; 
+          $K= $row['pbad']; 
+         $L= 'old'; 
+          $M= $row['pstatus2'] ;
+          $N= $oodate ;
+          $O= $odate ;
+         $P= $row['admindate']; 
+          $Q= $row['admittedate2']; 
+         $R= $row['conf'];
+        
+        
+        //echo " $A $B $C $D $E $F $G  $H $I $J $K $L $M $N $O .... <br><br><br>" ;	
+        
+        
+        $sql="INSERT INTO ipdgenralinfoold VALUES ('NULL','$A','$B' , '$C' , '$D' , '$E' , '$F' , '$G' , '$H' , '$I' , '$J' , '$K' , '$L' , '$M' , '$N' , '$O' ,'$P' ,'$Q' , '' , '','$R' )";
+        //echo $sql ; 
+        if($mysqli->query($sql))
+        {
+            echo "<script>alert('IPD Registered Successfully!');</script>";
+        }
+        else
+        {
+        echo "<script>alert('Database Error occured\n please contact system admin!');</script>";
+    
+        }
+    }
 
 
 
@@ -313,7 +554,6 @@ if(isset($_POST['btnsubmit']))
 
 
 }
-
 
 
 
